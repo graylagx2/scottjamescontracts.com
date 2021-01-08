@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>About us</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Performs options contract calculations">
+  <meta name="theme-color" content="#444444" />
+
+  <!-- Apple safari PWA meta tag for full screen when added to homepage -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Android/Chrome PWA meta tag for full screen when added to homepage -->
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- Path to manifest.json -->
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+
+  <!-- App icon for ios -->
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icons/Logo@512.png') }}" />
+
+  <!-- Favicon  -->
+  <link rel="shortcut icon" type="image/jpg" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+  <!-- Bootstrap css -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css"
+    integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN" crossorigin="anonymous" />
+
+  <!-- Bootstrap social-icons css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css"
+    integrity="sha512-f8mUMCRNrJxPBDzPJx3n+Y5TC5xp6SmStstEfgsDXZJTcxBakoB5hvPLhAfJKa9rCvH+n3xpJ2vQByxLk4WP2g=="
+    crossorigin="anonymous" />
+
+  <!-- font-awesome css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,500&display=swap" rel="stylesheet" />
+
+  <!-- Our personal custom css rules  -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}" />
+</head>
+
+<body>
+  <!-- The container for our bootstrap body layout -->
+  <div class="container">
+    <header>
+      <nav class="navbar bg-secondary sticky-top h-100">
+        <img src="{{url_for('static', filename='images/logo/Logo@512.png')}}" width="100" height="100"
+          alt="Scott James Logo" role="presentation" />
+        <h1 id="header-text" class="text-right">Strike price calculator</h1>
+      </nav>
+    </header>
+  </div>
+  <div class="container-fluid h-100">
+    <div class="card text-center text-muted d-flex flex-column h-100">
+      <div class="card-header">About us</div>
+      <div class="cb-1 card-body justify-content-center flex-grow-1">
+        <p class="card-text">
+         Using yahoo finance we fetch the latest data available on a stock ticker selected by the user. The user is then prompted to select a contract date. Using the historical data of the ticker and the bounds of the option contract we calculate an appropriate strike price for that contract. 
+        </p>
+        <h5 class="card-title">Contact us</h5>
+                <!-- Message sent alert -->
+                <div id="messageSentFlash" class="text-center m-5">
+                  <p>Your message has been sent</p>
+                </div>
+                <form
+                  class="needs-validation mb-5"
+                  id="contactUs"
+                  novalidate
+                  method="POST"
+                >
+                  <div class="form-group">
+                    <label for="Email1">Return Email Address</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="InputEmail1"
+                      name="return-email"
+                      aria-describedby="emailHelp"
+                      placeholder="Enter return email here..."
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                      required
+                    />
+                    <div id="InputEmail1" class="invalid-feedback">
+                      Please provide a valid email address.
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted"
+                      >We'll never share your email with anyone else.</small
+                    >
+                  </div>
+                  <div class="form-group">
+                    <label for="emailSubject mt-2">Email Subject</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="emailSubject"
+                      name="subject"
+                      aria-describedby="subjectHelp"
+                      placeholder="Enter email subject here..."
+                      required
+                    />
+                    <div id="emailSubject" class="invalid-feedback">
+                      Please provide email subject
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="mt-2" for="emailMessage">Message Body</label>
+                    <textarea
+                      class="form-control mr-sm-2"
+                      id="emailMessage"
+                      name="message-body"
+                      type="email"
+                      placeholder="Message here..."
+                      aria-label="Search"
+                      required
+                    ></textarea>
+                    <div id="emailMessage" class="invalid-feedback">
+                      Message body can not be empty.
+                    </div>
+                  </div>
+                  <button
+                    class="btn btn-secondary btn-block my-2 my-sm-0"
+                    id="emailSubmit"
+                    name="contact-us"
+                    type="submit"
+                  >
+                    Email us
+                  </button>
+                </form>
+      </div>
+    </div>
+    <button id="home-btn" type="button" class="btn btn-block btn-success" tabindex="3">
+        <span class="fa fa-home" role="presentation"></span>
+        Home
+    </button>
+  </div>
+  </div>
+  <!-- closing bootstrap container -->
+
+  <!-- Our personal javascript files -->
+  <script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/aboutus.js') }}"></script>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

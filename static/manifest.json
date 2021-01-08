@@ -1,0 +1,49 @@
+{
+    "name": "ScottJamesContracts",
+    "short_name": "Options Calculator",
+    "description": "Formulating strike prices for stock options contracts",
+    "version": "0.1",
+    "manifest_version": 2,
+    "default_locale": "en-GB",
+    "author": "Grant Getzfrid",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#444444",
+    "background_color": "#444444",
+    "icons": [
+        {
+            "src": "/static/images/splash/Splash@256.png",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/images/icons/Logo@512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/images/splash/Splash@384.png",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/images/splash/Splash@512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/images/splash/Splash@1024.png",
+            "sizes": "1024x1024",
+            "type": "image/png"
+        }
+    ],
+    "app": {
+        "permissions": [
+            "unlimitedStorage",
+            "notifications",
+            "fullscreen"
+        ]
+    }
+}

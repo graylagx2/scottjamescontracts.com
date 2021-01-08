@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Scott James Contracts</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Performs options contract calculations">
+    <meta name="theme-color" content="#444444" />
+
+    <!-- Apple safari PWA meta tag for full screen when added to homepage -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta 
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    >
+
+    <!-- Android/Chrome PWA meta tag for full screen when added to homepage -->
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Path to manifest.json -->
+    <link 
+      rel="manifest" 
+      href="{{ url_for('static', filename='manifest.json') }}"
+    >
+
+    <!-- App icon for ios -->
+    <link
+    rel="apple-touch-icon"
+    href="{{ url_for('static', filename='images/icons/Logo@512.png') }}"
+    />
+
+    <!-- Favicon  -->
+    <link rel="shortcut icon" type="image/jpg" href="{{ url_for('static', filename='favicon.ico') }}"/>
+
+    <!-- Bootstrap css -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css"
+      integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap social-icons css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css"
+      integrity="sha512-f8mUMCRNrJxPBDzPJx3n+Y5TC5xp6SmStstEfgsDXZJTcxBakoB5hvPLhAfJKa9rCvH+n3xpJ2vQByxLk4WP2g=="
+      crossorigin="anonymous"
+    />
+
+    <!-- font-awesome css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <!-- Google font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Our personal custom css rules  -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/styles.css')}}"
+    />
+  </head>
+  <body>
+    <!-- The container for our bootstrap body layout -->
+    <div class="container">
+      <header>
+        <nav class="navbar bg-secondary sticky-top h-100">
+          <img
+            src="{{url_for('static', filename='images/logo/Logo@512.png')}}"
+            width="100"
+            height="100"
+            alt="Scoot James Logo"
+          />
+          <h1 id="header-text" class="text-right">Strike price calculator</h1>
+        </nav>
+      </header>
+      <!-- Contract generator expiration select form -->
+      <!-- Contract data -->
+      <div id="ticker">
+          <h6>
+            <div class="card text-center">
+              <div class="card-header bg-secondary">
+                <h5>{{company}}</h5>
+                    <h6>{{ticker}}</h6>
+              </div>
+            </div>
+          </h6>
+      </div>
+      <form name="input" autocomplete="off" method="POST">
+        <div class="form-group">
+            <div class="form-group">
+                <label for="selectState">Contract expiration date</label>
+                <select 
+                id="selectState" 
+                class="form-control" 
+                name="form_select"
+                tabindex="1"
+                aria-label="Select date"
+                aria-required="true"
+                required>
+                  <option value="" selected>Available contracts...</option>
+                  {% for date in options %}
+                  <option>{{date}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+          <input
+          id="submit"
+          required="required"
+          type="submit"
+          class="btn btn-success btn-block"
+          tabindex="2"
+        />
+      </form>
+        </div>
+        <!-- Loading animation to show when loading flask data -->
+        <div id="loader" class="text-center text-success m-5">
+          <div
+            class="spinner-grow"
+            style="width: 3rem; height: 3rem"
+            role="status"
+          >
+            <span class="sr-only" role="presentation">Loading...</span>
+        </div>
+      </div>
+      <footer class="container-fluid">
+        <div class="card text-center text-muted d-flex flex-column">
+          <div class="card-header">Info</div>
+          <div class="cb-1 card-body justify-content-center flex-grow-1">
+            <p class="card-text">
+              Your contract term will determine when the option contract expires. This expiration date is also used to formulate a strike price. For best results we recommend at least a 3 month term.
+            </p>
+            <a class="btn btn-social-icon bg-secondary btn-lg btn-twitter text-muted" href="https://www.facebook.com/">
+              <span class="fa fa-facebook" role="presentation"></span>
+            </a>
+            <a
+              class="btn btn-social-icon bg-secondary btn-lg btn-instagram text-muted"
+              href="https://www.instagram.com/"
+            >
+              <span class="fa fa-instagram" role="presentation"></span>
+            </a>
+            <a
+              class="btn btn-social-icon bg-secondary btn-lg btn-instagram text-muted"
+              href="https://twitter.com/"
+            >
+              <span class="fa fa-twitter" role="presentation"></span>
+            </a>
+            <a class="btn btn-social-icon bg-secondary btn-lg btn-youtube text-muted" href="https://www.youtube.com/">
+              <span class="fa fa-youtube" role="presentation"></span>
+            </a>
+            <a class="btn btn-social-icon bg-secondary btn-lg btn-youtube text-muted" href="https://www.reddit.com/">
+              <span class="fa fa-reddit" role="presentation"></span>
+            </a>
+            <p id="disclaimer" class="mt-4">
+                <em>
+                  Disclaimer: This web app references an opinion and is for
+                  information purposes only. It is not intended to be investment
+                  advice. Seek a duly licensed professional for investment advice
+                </em>
+              </p>
+          </div>
+          <div class="card-footer text-muted">
+            <button
+            id="home-btn"
+            type="button"
+            class="btn btn-success btn-lg btn-block fixed-bottom"
+            tabindex="3"
+          >
+            <span class="fa fa-home fa-lg" role="presentation"></span>
+            Home
+          </button>
+          </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- closing bootstrap container -->
+
+    <!-- Our personal javascript files -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/loader.js') }}"></script>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script
+    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"
+    ></script>
+    <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"
+    ></script>
+  </body>
+</html>         

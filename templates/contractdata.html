@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Scott James Contracts</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Performs options contract calculations">
+    <meta name="theme-color" content="#444444" />
+
+    <!-- Apple safari PWA meta tag for full screen when added to homepage -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta 
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    >
+
+    <!-- Android/Chrome PWA meta tag for full screen when added to homepage -->
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Path to manifest.json -->
+    <link 
+      rel="manifest" 
+      href="{{ url_for('static', filename='manifest.json') }}"
+    >
+
+    <!-- App icon for ios -->
+    <link
+    rel="apple-touch-icon"
+    href="{{ url_for('static', filename='images/icons/Logo@512.png') }}"
+    />
+
+    <!-- Favicon  -->
+    <link rel="shortcut icon" type="image/jpg" href="{{ url_for('static', filename='favicon.ico') }}"/>
+
+    <!-- Bootstrap css -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css"
+      integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap social-icons css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css"
+      integrity="sha512-f8mUMCRNrJxPBDzPJx3n+Y5TC5xp6SmStstEfgsDXZJTcxBakoB5hvPLhAfJKa9rCvH+n3xpJ2vQByxLk4WP2g=="
+      crossorigin="anonymous"
+    />
+
+    <!-- font-awesome css -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <!-- Google font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Our personal custom css rules  -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/styles.css')}}"
+    />
+  </head>
+  <!-- The container for our bootstrap body layout -->
+  <div class="container">
+    <header>
+      <nav class="navbar bg-secondary sticky-top h-100">
+        <img
+          src="{{url_for('static', filename='images/logo/Logo@512.png')}}"
+          width="100"
+          height="100"
+          alt="Scott James Logo"
+          role="presentation"
+        />
+        <h1 id="header-text" class="text-right">Strike price calculator</h1>
+      </nav>
+    </header>
+    <form name="input" autocomplete="off" method="POST">
+      <div class="form-group">
+          <div class="form-group">
+              <label for="selectState">Change expiration date</label>
+              <select 
+              id="selectState"
+              class="form-control" 
+              name="form_select"
+              tabindex="1" 
+              aria-label="Select date"
+              aria-required="true"
+              required>
+                <option value="" selected>Available contracts...</option>
+                {% for date in options %}
+                <option>{{date}}</option>
+                {% endfor %}
+              </select>
+            </div>
+        <input
+        id="submit"
+        required="required"
+        type="submit"
+        class="btn btn-success btn-block"
+        tabindex="2"
+      />
+    </form>
+      <!-- Contract data -->
+      <div id="contract-data" class="contract-data">
+        <ul class="list-group mt-3">
+          <div class="card text-center">
+            <div class="card-header bg-secondary">
+              <h5>{{company}}</h5>
+              <h6 id="current_price" name="{{current_price}}" class="badge badge-dark badge-pill text-success">
+               Price: ${{current_price}}
+              </h6>
+            </div>
+          </div>
+          <h5>
+            <li
+              class="contract-data-li list-group-item d-flex justify-content-between align-items-center"
+            >
+              {{term}} Day strike price
+              <div id="strike_warning" class="bounce">
+                <i class="fa fa-close"></i>
+                <i class="fa fa-thumbs-down" aria-hidden="true"></i><br>
+                This contract is not recommended. The strike price is below the current price. This means the price is not likely to move in favor of a call option. Try a longer contract term for ticker at this time.
+              </div>
+              <span id="strike_price" class="badge badge-success badge-pill" name="{{strike}}" role="presentation"> ${{strike}} </span>
+            </li>
+            {% if strike_shaved %}
+            <li
+              class="contract-data-li list-group-item d-flex justify-content-between align-items-center"
+            >
+              Strike with 10% correction
+              <span class="badge badge-success badge-pill" role="presentation"> ${{strike_shaved}} </span>
+            </li>
+            {% endif %}
+            {% if volatility %}
+            <li
+              class="contract-data-li list-group-item d-flex justify-content-between align-items-center"
+            >
+              {{term}} day volatility
+              <span class="badge badge-success badge-pill" role="presentation">
+                 + / - ${{volatility}} </span>
+            </li>
+            {% endif %}
+          </h5>
+        </ul>
+      </div>
+      <!-- Trust Holders data navbar -->
+      <div>
+        <div class="collapse" id="navbarToggleExternalContent">
+          <div class="bg-dark p-4">
+            {% if mh_trust_table_data and ih_trust_table_data %}
+              <!-- Major holders data -->
+              <div id="caretToggleMh">
+                <button
+                  id="mH"
+                  class="btn btn-block btn-secondary m-2 dropdown-toggle"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#major-holders"
+                  aria-expanded="false"
+                  aria-controls="collapseExample"
+                >
+                  Trusts details
+                </button>
+                <div class="collapse" id="major-holders">
+                  <div class="card card-body">
+                    <h6>
+                      <ul class="list-group mt-3">
+                        {% for key, value in mh_trust_table_data.items() %}
+                        <li
+                          class="contract-data-li list-group-item d-flex justify-content-between align-items-center"
+                        >
+                          {{value['0']}}
+                          <span class="badge badge-success badge-pill" role="presentation">
+                            {{value['1']}}
+                          </span>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </h6>
+                  </div>
+                </div>
+              </div>
+              <!-- Trusts institutional holders data -->
+            <div id="caretToggleIh">
+              <button
+                id="iH"
+                class="btn btn-block btn-secondary m-2 dropdown-toggle"
+                type="button"
+                data-toggle="collapse"
+                data-target="#I-Holders"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                Trusts General details
+              </button>
+              <div class="collapse" id="I-Holders">
+                <div class="card card-body">
+                  <h6>
+                    <ul class="list-group mt-3">
+                      {% for key, value in ih_trust_table_data.items() %}
+                      <li
+                        class="contract-data-li list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        {{value['0']}}
+                        <span class="badge badge-success badge-pill" role="presentation">
+                          {{value['1']}}
+                        </span>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                  </h6>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if mh_table_data and ih_table_data %}
+             <!-- Major holders data -->
+             <div id="caretToggleMh">
+              <button
+                id="mH"
+                class="btn btn-block btn-secondary m-2 dropdown-toggle"
+                type="button"
+                data-toggle="collapse"
+                data-target="#major-holders"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                Major Holders
+              </button>
+              <div class="collapse" id="major-holders">
+                <div class="card card-body">
+                  <h6>
+                    <ul class="list-group mt-3">
+                      {% for key, value in mh_table_data.items() %}
+                      <li
+                        class="contract-data-li list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        {{value['1']}}
+                        <span class="badge badge-success badge-pill" role="presentation">
+                          {{value['0']}}
+                        </span>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                  </h6>
+                </div>
+              </div>
+            </div>
+            <!-- Institutional holders data -->
+            <div id="caretToggleIh">
+              <button
+                id="iH"
+                class="btn btn-block btn-secondary m-2 dropdown-toggle"
+                type="button"
+                data-toggle="collapse"
+                data-target="#I-Holders"
+                aria-expanded="false"
+                aria-controls="collapseExample"
+              >
+                Institutional Holders
+              </button>
+            </div>
+            <!-- Ih data multiple drop downs for each institution -->
+            <!-- If ticker was standard not a trust -->
+            {% for key, value in ih_table_data.items() %}
+            <div class="collapse" id="I-Holders">
+              <div class="accordion" id="accordionExample">
+                <div class="card">
+                  <div class="card-header" id="headingTwo">
+                    <div id="caretToggleIhI">
+                      <button
+                        id="iHI"
+                        class="btn btn-dark collapsed dropdown-toggle"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#holder"
+                        aria-expanded="true"
+                        aria-controls="collapseTwo"
+                      >
+                        {{value['Holder']}}
+                      </button>
+                    </div>
+                    <div
+                      id="holder"
+                      class="collapse"
+                      aria-labelledby="headingTwo"
+                      data-parent="#accordionExample"
+                    >
+                      <table class="table table-sm table-striped table-dark">
+                        <thead>
+                          <tr>
+                            <th scope="col">Shares</th>
+                            <th scope="col">% Out</th>
+                            <th scope="col">Value</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr class="text-success">
+                            <td>{{value['Shares']}}</td>
+                            <td>{{value['% Out']}}</td>
+                            <td>{{value['Value']}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <!-- TradingView Widget BEGIN -->
+            <div id="chart" class="container-fluid">
+              <div id="tradingview_f79a4"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+              <script type="text/javascript">
+                new TradingView.widget(
+                {
+                "width": "100%",
+                "height": 500,
+                "symbol": "{{ticker}}",
+                "interval": "M",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "withdateranges": true,
+                "hide_side_toolbar": true,
+                "allow_symbol_change": true,
+                "details": true,
+                "calendar": true,
+                "show_popup_button": false
+              }
+                );
+              </script>
+            </div>
+            <!-- TradingView Widget END -->
+            </div>
+          </div>
+        </div>
+        <div id="moreToggle">
+          <nav class="navbar navbar-dark p-0">
+            <button
+              id="more"
+              class="navbar-toggler bg-success text-white btn-block dropdown-toggle mt-1"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarToggleExternalContent"
+              aria-controls="navbarToggleExternalContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+              tabindex="3"
+            >
+              More
+            </button>
+          </nav>
+        </div>
+      </div>
+      <footer class="container-fluid mt-3">
+        <div class="card text-center text-muted d-flex flex-column">
+          <div class="card-header">Complete</div>
+          <div class="cb-1 card-body justify-content-center flex-grow-1 mt-1">
+            <p class="card-text">
+              Strike price's are assumed for call options. Both the strike price and volatility are determined by your contract term. 
+            </p>
+            <a class="btn btn-social-icon bg-secondary btn-lg btn-twitter text-muted" href="https://www.facebook.com/">
+              <span class="fa fa-facebook" role="presentation"></span>
+            </a>
+            <a
+              class="btn btn-social-icon bg-secondary btn-lg btn-instagram text-muted"
+              href="https://www.instagram.com/"
+            >
+              <span class="fa fa-instagram" role="presentation"></span>
+            </a>
+            <a
+              class="btn btn-social-icon bg-secondary btn-lg btn-instagram text-muted"
+              href="https://twitter.com/"
+            >
+              <span class="fa fa-twitter" role="presentation"></span>
+            </a>
+            <a class="btn btn-social-icon bg-secondary btn-lg btn-youtube text-muted" href="https://www.youtube.com/">
+              <span class="fa fa-youtube" role="presentation"></span>
+            </a>
+            <a class="btn btn-social-icon bg-secondary btn-lg btn-youtube text-muted" href="https://www.reddit.com/">
+              <span class="fa fa-reddit" role="presentation"></span>
+            </a>
+            <p id="disclaimer" class="mt-3 mb-3">
+                <em>
+                  Disclaimer: This web app references an opinion and is for
+                  information purposes only. It is not intended to be investment
+                  advice. Seek a duly licensed professional for investment advice
+                </em>
+              </p>
+          </div>
+          <div class="card-footer text-muted">
+            <button
+              id="home-btn"
+              type="button"
+              class="btn btn-success btn-lg btn-block fixed-bottom"
+              tabindex="4"
+            >
+              <span class="fa fa-home fa-lg" role="presentation"></span>
+              Home
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- closing bootstrap container -->
+    
+    <!-- Our personal javascript files -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/caretToggle.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/price_compare.js') }}"></script>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script
+    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"
+    ></script>
+    <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"
+    ></script>
+  </body>
+</html>    
