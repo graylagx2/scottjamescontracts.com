@@ -17,7 +17,6 @@ Dependencies:
 
 PIP dependencies:
 	flask
-	requests
 
 Notes:
 
@@ -35,7 +34,6 @@ from flask import (
 )
 from flask_mail import Message, Mail
 import os
-from time import sleep
 
 # Instantiating the flask object
 app = Flask(__name__)
@@ -52,55 +50,51 @@ mail = Mail(app)
 def home():
     # Handling POST requests
     if request.method == 'POST':
+        if 'contact-us' in request.form:
+            return_email = request.form['return-email']
+            email_subject = request.form['subject']
+            email_body = request.form['message-body']
+            msg = Message(
+                subject=email_subject,
+                sender=app.config.get("MAIL_USERNAME"),
+                recipients=["scottjamescontracts@gmail.com"],
+                body=f"{return_email} says:\n{email_body}"
+            )
+            mail.send(msg)
 
-        # Getting input from html form data from the html name attribute
-        ticker = request.form["ticker_input"]
+            return redirect(url_for('home'))
 
-        # Creating a cookie session to pass data to other view functions
-        session['ticker'] = ticker
+        if 'ticker_input' in request.form:
 
-        # Sending user to next page to fill in contract expiration date
-        # and sending variables to that view function by URL arguments.
-        return redirect(url_for('contractexpiration'))
+            # Getting input from html form data from the html name attribute
+            ticker = request.form["ticker_input"]
 
-    # Handling invalid input from user when redirected back home for invalid
-    #  ticker input or no contracts available for ticker
-    # The url will contain which error was raised
-    if request.args.get('error') == "Invalid-ticker":
-        return render_template(
-            'home.html',
-            invalid_ticker="Invalid ticker: Please enter a valid ticker"
-        )
+            # Creating a cookie session to pass data to other view functions
+            session['ticker'] = ticker
 
-    elif request.args.get('error') == "No-options-available":
-        return render_template(
-            'home.html',
-            invalid_ticker="Not available: Could not find options for ticker"
-        )
+            # Sending user to next page to fill in contract expiration date
+            # and sending variables to that view function by URL arguments.
+            return redirect(url_for('contractexpiration'))
 
-    # Restting the session for home page get
-    #  Return home.html if the request is a get request
-    return render_template('home.html')
+    if request.method == 'GET':
+        # Handling invalid input from user when redirected back home for invalid
+        #  ticker input or no contracts available for ticker
+        # The url will contain which error was raised
+        if request.args.get('error') == "Invalid-ticker":
+            return render_template(
+                'home.html',
+                invalid_ticker="Invalid ticker: Please enter a valid ticker"
+            )
 
+        elif request.args.get('error') == "No-options-available":
+            return render_template(
+                'home.html',
+                invalid_ticker="Not available: Could not find options for ticker"
+            )
 
-@app.route("/aboutus", methods=['POST', 'GET'])
-def about():
-    if request.method == 'POST':
-        print(request.form)
-        return_email = request.form['return-email']
-        email_subject = request.form['subject']
-        email_body = request.form['message-body']
-        msg = Message(
-            subject=email_subject,
-            sender="scottjamescontracts@gmail.com",
-            recipients=["scottjamescontracts@gmail.com"],
-            body=f"{return_email} says:\n{email_body}"
-        )
-        mail.send(msg)
-
-        sleep(2)
-        return redirect(url_for('home'))
-    return render_template('aboutus.html')
+        # Restting the session for home page get
+        #  Return home.html if the request is a get request
+        return render_template('home.html')
 
 
 # View function for the contract expiration select page
