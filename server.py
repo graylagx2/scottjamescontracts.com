@@ -2,15 +2,18 @@
 
 Title: Contracts.py
 
-Version: Development/1.3
+Version: Production 1.1
 
 Author: Grant Getzfrid
 
 Contributors: N/A
 
 Description:
-    This is a stand alone flask server that generates a strike price for stock
-    option contracts using contract_calculator.py. The user is first prompted to input a stock ticker then to pick the expiration date of the contract. That data is then used to fetch historical price data specific to the contract term and calculate a strike price.
+    Flask app that generates a strike price for stock option contracts using 
+    contract_calculator.py. The user is first prompted to input a stock ticker 
+    then to pick the expiration date of the contract. That data is then used 
+    to fetch historical price data specific to the contract term and calculate 
+    a strike price.
 
 Dependencies:
     contract_calculator.py
