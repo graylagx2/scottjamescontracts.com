@@ -4,7 +4,7 @@ A flask finance app to calculate strike prices for stock (call) options contract
 ![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/home.png)![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/contract_expiration.png)
 ![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/contract_data.png)![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/C_data_err.png)
 
-**The formula used to calculate strike prices**
+ # The formula used to calculate strike prices
 
     (todays closing price) - (length of contract days ago) = strike
 
