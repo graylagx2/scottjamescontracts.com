@@ -14,7 +14,7 @@ If the contract is 1 year in length or greater an 10% market correction is appli
 
 # Make strike price calculations in python
 
-def calculate_strike(self):
+    def calculate_strike(self):
         # Make strike price calculations
         self.strike = round(
             (self.today_close - self.term_close) / 1.5 + self.today_close, 2
