@@ -8,7 +8,7 @@ A flask finance app to calculate strike prices for stock (call) options contract
 
     (todays closing price) - (length of contract days ago) = strike
 
-If the contract is 1 year in length or greater an 10% market correction is applied to the strike
+**If the contract is 1 year in length or greater an 10% market correction is applied to the strike**
 
     (strike) x (.9) = 10% correction strike price
 
