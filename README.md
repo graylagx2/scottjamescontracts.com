@@ -31,5 +31,5 @@ A flask finance app to calculate strike prices for stock (call) options contract
         return self.strike, self.strike_shaved
 
 ![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/C_data_err.png)
-![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/Contact_us.png)
+![Screen shot of sofware image](https://github.com/graylagx2/Images/blob/master/contact_us.png)
 
